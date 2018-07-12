@@ -3,7 +3,6 @@ package com.ef.dao;
 import com.ef.dao.exception.DaoException;
 import com.ef.model.AccessLogEntry;
 import org.apache.commons.pool2.ObjectPool;
-import org.apache.commons.pool2.impl.GenericObjectPool;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
@@ -16,7 +15,6 @@ import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.Collections;
 
-import static org.junit.Assert.*;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
