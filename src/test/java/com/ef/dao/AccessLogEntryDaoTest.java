@@ -1,5 +1,6 @@
 package com.ef.dao;
 
+import com.ef.dao.exception.DaoException;
 import com.ef.model.AccessLogEntry;
 import org.apache.commons.pool2.ObjectPool;
 import org.apache.commons.pool2.impl.GenericObjectPool;
@@ -11,6 +12,7 @@ import org.mockito.runners.MockitoJUnitRunner;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.Collections;
 
@@ -61,6 +63,14 @@ public class AccessLogEntryDaoTest {
         verify(statement).executeBatch();
         verify(connectionPool).borrowObject();
 
+    }
+
+    @Test(expected = DaoException.class)
+    public void testSaveWhenSQLException() throws Exception {
+        given(connectionPool.borrowObject()).willReturn(connection);
+        given(connection.prepareStatement(AccessLogEntryDao.INSERT_INTO_ACCESS_ENTRY_DATE_TIME_IP_ADDRESS_REQUEST_VALUES)).willThrow(new SQLException());
+
+        accessLogEntryDao.save(Collections.singletonList(new AccessLogEntry("2017-01-01 00:00:11.763|192.168.234.82|\"GET / HTTP/1.1\"|200|\"swcd (unknown version) CFNetwork/808.2.16 Darwin/15.6.0\"")));
     }
 
 }
