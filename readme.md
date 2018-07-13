@@ -19,3 +19,10 @@ The file is a pipe ('|') separated file. It must have the following format:
 ```
 date_time(yyyy-MM-dd HH:MM:ss.SSS)|ip_address(String)|request(String)|status_code(Integer)|user_agent(String)
 ```
+
+## Database Creation
+If you need to create the database in your local environment, please, make sure you have installed MySQL 8. You will have to create a new schema.
+Once you create the schema, find in the "dbScripts" folder, the "create-tables.sql" file and run it. Configure the "parser.properties" file to run with the new schema configuration.
+
+## Database queries
+You will find database queries in the "dbScripts folder"
