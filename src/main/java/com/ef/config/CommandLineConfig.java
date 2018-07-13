@@ -3,6 +3,11 @@ package com.ef.config;
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
 
+/**
+ *
+ * Configuration class for Command Line Arguments
+ *
+ */
 public class CommandLineConfig {
 
     public static final String ACCESSLOG_ARG_KEY = "accesslog";

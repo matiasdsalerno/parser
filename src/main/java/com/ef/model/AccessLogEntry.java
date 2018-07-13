@@ -1,6 +1,7 @@
 package com.ef.model;
 
 import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 
 public class AccessLogEntry {

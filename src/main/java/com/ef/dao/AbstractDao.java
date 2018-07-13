@@ -9,6 +9,12 @@ import java.sql.SQLException;
 import java.util.List;
 import java.util.Objects;
 
+/**
+ *
+ * Data Access Object. It handles the generic execution of Database queries/updates
+ *
+ * @param <T> is the Class of the objects that are going to be persisted
+ */
 public abstract class AbstractDao<T> {
 
     private ObjectPool<Connection> connectionPool;

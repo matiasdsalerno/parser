@@ -19,6 +19,10 @@ import java.util.concurrent.Executors;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+/**
+ *
+ * Main application service. It will collaborate with the Daos to persist the data
+ */
 public class AccessLogParser {
 
     private final String filePath;
@@ -44,19 +48,9 @@ public class AccessLogParser {
                 return Collections.emptyList();
             }
 
-            Lists.partition(accessLogEntries, 10000)
-                    .stream()
-                    .map(entry -> CompletableFuture.runAsync(() -> accessLogEntryDao.save(entry), Executors.newFixedThreadPool(50)))
-                    .forEach(CompletableFuture::join);
+            saveAccessLogEntries(accessLogEntries);
 
-            List<BlockedIpAddress> ipAddressCount = accessLogEntries.stream()
-                    .filter(entry -> entry.getTime().isAfter(beginTime) && entry.getTime().isBefore(endTime))
-                    .collect(Collectors.groupingBy(AccessLogEntry::getIpAddress,
-                            Collectors.counting()))
-                    .entrySet().stream()
-                    .filter(entry -> entry.getValue() > threshold)
-                    .map(entry -> new BlockedIpAddress(entry.getKey(), String.format("Blocked due to exceeding the access threshold of %d between %s and %s.", threshold, Parser.DATE_TIME_FORMATTER.format(beginTime), Parser.DATE_TIME_FORMATTER.format(endTime))))
-                    .collect(Collectors.toList());
+            List<BlockedIpAddress> ipAddressCount = filterIpAddressToBlock(beginTime, threshold, endTime, accessLogEntries);
 
             if (ipAddressCount.isEmpty()) {
                 return Collections.emptyList();
@@ -67,5 +61,23 @@ public class AccessLogParser {
         } catch (IOException e) {
             throw new RuntimeException("Error while parsing file with path: " + filePath, e);
         }
+    }
+
+    private List<BlockedIpAddress> filterIpAddressToBlock(LocalDateTime beginTime, Integer threshold, LocalDateTime endTime, List<AccessLogEntry> accessLogEntries) {
+        return accessLogEntries.stream()
+                        .filter(entry -> entry.getTime().isAfter(beginTime) && entry.getTime().isBefore(endTime))
+                        .collect(Collectors.groupingBy(AccessLogEntry::getIpAddress,
+                                Collectors.counting()))
+                        .entrySet().stream()
+                        .filter(entry -> entry.getValue() > threshold)
+                        .map(entry -> new BlockedIpAddress(entry.getKey(), String.format("Blocked due to exceeding the access threshold of %d between %s and %s.", threshold, Parser.DATE_TIME_FORMATTER.format(beginTime), Parser.DATE_TIME_FORMATTER.format(endTime))))
+                        .collect(Collectors.toList());
+    }
+
+    private void saveAccessLogEntries(List<AccessLogEntry> accessLogEntries) {
+        Lists.partition(accessLogEntries, 10000)
+                .stream()
+                .map(entry -> CompletableFuture.runAsync(() -> accessLogEntryDao.save(entry), Executors.newFixedThreadPool(50)))
+                .forEach(CompletableFuture::join);
     }
 }
