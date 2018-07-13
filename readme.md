@@ -6,7 +6,7 @@ The tool is executed with the following command:
 ```
 java -cp "parser.jar" com.ef.Parser --accesslog=/path/to/file --startDate=2017-01-01.13:00:00 --duration=hourly --threshold=100
 ```
-Make sure you have in the same directory of the jar the properties file named `parser.properties`
+Make sure you have in the same directory of the jar the properties file named `parser.properties`. There you can configure the DataBase Access
 ## Parameters
 The parameters are:
  - `accesslog` = Path to the access log file
