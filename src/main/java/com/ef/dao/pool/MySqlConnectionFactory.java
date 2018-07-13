@@ -9,19 +9,24 @@ import java.sql.DriverManager;
 
 /**
  * Class used to create MySQL Connections.
- * Connection data, such as hostname, port, schema, user, password, serverTimeZone, etc.
- * should be loaded from properties files, not harcoded in the class
  */
 public class MySqlConnectionFactory extends BasePooledObjectFactory<Connection> {
 
-    private static final String PASS = "parser123";
-    private static final String USER = "parser";
+    private final String user;
+    private final String password;
+    private final String connectionString;
+
+    public MySqlConnectionFactory(String host, String port, String schema, String timeZone, String user, String password) {
+        this.connectionString = "jdbc:mysql://" + host + ":"+port + "/" + schema + "?serverTimezone=" + timeZone;
+        this.user = user;
+        this.password = password;
+    }
 
     @Override
     public Connection create() throws Exception {
         try {
             Class.forName("com.mysql.jdbc.Driver");
-            return DriverManager.getConnection("jdbc:mysql://localhost:3306/parser?serverTimezone=America/Buenos_Aires", USER, PASS);
+            return DriverManager.getConnection(connectionString, user, password);
         } catch (Exception e) {
             throw new RuntimeException("Error while creating MySQL Connection pool", e);
         }
